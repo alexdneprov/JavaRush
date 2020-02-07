@@ -4,8 +4,8 @@ import java.util.HashMap;
 
 public class OurHashBiMapStorageStrategy implements StorageStrategy {
 
-    HashMap <Long,String> k2v;
-    HashMap <String,Long> v2k;
+    HashMap <Long,String> k2v = new HashMap<>();
+    HashMap <String,Long> v2k = new HashMap<>();
 
     @Override
     public boolean containsKey(Long key) {
@@ -15,6 +15,7 @@ public class OurHashBiMapStorageStrategy implements StorageStrategy {
     @Override
     public boolean containsValue(String value) {
         return v2k.containsKey(value);
+
     }
 
     @Override

@@ -11,13 +11,13 @@ import static com.javarush.task.task33.task3310.Helper.generateRandomString;
 public class Solution {
 
     public static void main(String[] args) {
-        //testStrategy(new HashMapStorageStrategy(),10000);
-        //System.out.println("--------------------------------");
-        //testStrategy(new OurHashMapStorageStrategy(), 10000);
+        testStrategy(new HashMapStorageStrategy(),10000);
+        System.out.println("--------------------------------");
+        testStrategy(new OurHashMapStorageStrategy(), 10000);
         System.out.println("--------------------------------");
         testStrategy(new FileStorageStrategy(),100);
-        //System.out.println("--------------------------------");
-        //testStrategy(new OurHashBiMapStorageStrategy(),17);
+        System.out.println("--------------------------------");
+        testStrategy(new OurHashBiMapStorageStrategy(),10000);
     }
 
     public static Set<Long> getIds (Shortener shortener, Set<String> strings) {
@@ -35,9 +35,9 @@ public class Solution {
     public static Set<String> getStrings (Shortener shortener, Set<Long> keys) {
         Set<String> strings = new HashSet<>();
 
-        for (Long key : keys) {
+        /*for (Long key : keys) {
             System.out.println("key = " + key + "; " + shortener.getString(key));
-        }
+        }*/
 
         for (Long key : keys) {
             strings.add(shortener.getString(key));
