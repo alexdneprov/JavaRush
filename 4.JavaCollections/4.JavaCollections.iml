@@ -15,5 +15,6 @@
     <orderEntry type="library" name="jaxb-impl-2.3.0 (1)" level="project" />
     <orderEntry type="library" name="javax.activation-1.2.0 (1)" level="project" />
     <orderEntry type="library" name="org.slf4j:slf4j-api:1.7.23" level="application" />
+    <orderEntry type="library" name="Maven: com.google.guava:guava:23.5-jre" level="project" />
   </component>
 </module>
