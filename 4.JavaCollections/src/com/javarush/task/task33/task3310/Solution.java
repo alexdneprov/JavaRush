@@ -1,7 +1,6 @@
 package com.javarush.task.task33.task3310;
 
-import com.javarush.task.task33.task3310.strategy.FileStorageStrategy;
-import com.javarush.task.task33.task3310.strategy.StorageStrategy;
+import com.javarush.task.task33.task3310.strategy.*;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -17,10 +16,14 @@ public class Solution {
         //testStrategy(new OurHashMapStorageStrategy(), 10000);
         System.out.println("--------------------------------");
         testStrategy(new FileStorageStrategy(),100);
+        //System.out.println("--------------------------------");
+        //testStrategy(new OurHashBiMapStorageStrategy(),17);
     }
 
     public static Set<Long> getIds (Shortener shortener, Set<String> strings) {
         Set<Long> idsSet = new HashSet<>();
+
+
 
         for (String s : strings) {
             idsSet.add(shortener.getId(s));
@@ -31,6 +34,10 @@ public class Solution {
 
     public static Set<String> getStrings (Shortener shortener, Set<Long> keys) {
         Set<String> strings = new HashSet<>();
+
+        for (Long key : keys) {
+            System.out.println("key = " + key + "; " + shortener.getString(key));
+        }
 
         for (Long key : keys) {
             strings.add(shortener.getString(key));

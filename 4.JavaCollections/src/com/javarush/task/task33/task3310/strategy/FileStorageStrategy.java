@@ -5,7 +5,7 @@ import java.util.Objects;
 public class FileStorageStrategy implements StorageStrategy {
 
     static final int DEFAULT_INITIAL_CAPACITY = 16;
-    static final long DEFAULT_BUCKET_SIZE_LIMIT = 10_000;
+    static final long DEFAULT_BUCKET_SIZE_LIMIT = 10000;
     FileBucket[] table = new FileBucket[DEFAULT_INITIAL_CAPACITY];
     int size;
     private long bucketSizeLimit = DEFAULT_BUCKET_SIZE_LIMIT;
@@ -48,33 +48,18 @@ public class FileStorageStrategy implements StorageStrategy {
 
     void resize(int newCapacity) {
 
-        FileBucket[] old = table;
+        FileBucket[] oldTab = table;
         table = new FileBucket[newCapacity];
 
-        for (FileBucket e : old) {
-            if (e != null) {
-                if (e.getEntry().next == null) {
-                    int newIndexForOldElement = indexFor(e.getEntry().hash, table.length);
-                    table[newIndexForOldElement] = e;
-                } else {
-                    Entry el = e.getEntry().next;
-                    while (el != null) {
-                        int elemIndex = indexFor(el.hash, newCapacity);
-                        if (table[elemIndex].getEntry() == null) {
-                            table[elemIndex].putEntry(el);
-                        } else {
-                            Entry el2 = table[elemIndex].getEntry().next;
-                            while (el2 != null) {
-                                if (el2.next == null) {
-                                    el2.next = el;
-                                    break;
-                                }
-                                el2 = el2.next;
-                            }
-                        }
-                        el = el.next;
-                    }
+        for (FileBucket oldBucket : oldTab) {
+            if (oldBucket != null) {
+                Entry oldEntry = oldBucket.getEntry();
+                while (oldEntry != null) {
+                    int indexNew = indexFor(oldEntry.hash,table.length);
+                    addEntry(oldEntry.hash,oldEntry.key,oldEntry.value,indexNew);
+                    oldEntry = oldEntry.next;
                 }
+                oldBucket.remove();
             }
         }
     }
@@ -83,15 +68,43 @@ public class FileStorageStrategy implements StorageStrategy {
         FileBucket e = table[bucketIndex];
         if (e == null) {
             createEntry(hash,key,value,bucketIndex);
-        }else{
-            Entry el = e.getEntry();
-            while (el != null) {
-                if (el.next == null) {
-                    el.next = new Entry(hash,key,value,null);
-                }
-                el = el.next;
+        }else {
+            Entry mainElement = e.getEntry();
+            Entry el = mainElement;
+            if (el.next == null) {
+                el.next = new Entry(hash,key,value,null);
+                e.putEntry(el);
+                table[bucketIndex] = e;
+                return;
+            }
+            while (el.next != null) {
+                if (el.next.next == null) {
+                    el.next.next = new Entry(hash,key,value,null);
+                    e.putEntry(mainElement);
+                    table[bucketIndex] = e;
+                    break;
+                }else el = el.next;
             }
         }
+
+        /*
+        ПРОВЕРОЧНАЯ ПЕЧАТЬ ВСЕХ ПАР ПОСЛЕ ДОБАВЛЕНИЯ КАЖДОЙ
+         */
+        /*for (FileBucket fileBucket : table) {
+            int basketCount = 0;
+            if (fileBucket != null) {
+                System.out.print("_____________" + fileBucket.getClass().getSimpleName() + ": ");
+                Entry entry = fileBucket.getEntry();
+                if (entry == null) {
+                    System.out.print("is empty");
+                }else {
+                    while (entry != null) {
+                        System.out.print("key = " + entry.key + "; value = " + entry.value + " ---> BASKET NUMBER: " + basketCount + "\n");
+                        entry = entry.next;
+                    }
+                }
+            }
+        }*/
     }
     void createEntry(int hash, Long key, String value, int bucketIndex) {
         FileBucket fileBucket = new FileBucket();
@@ -106,12 +119,10 @@ public class FileStorageStrategy implements StorageStrategy {
     public boolean containsKey(Long key) {
         for (FileBucket fileBucket : table) {
             Entry entry = fileBucket.getEntry();
-            if (entry != null) {
-                while (entry != null) {
-                    if (entry.key.equals(key)) {
-                        return true;
-                    }else entry = entry.next;
-                }
+            while (entry != null) {
+                if (entry.key.equals(key)) {
+                    return true;
+                }else entry = entry.next;
             }
         }
         return false;
@@ -122,12 +133,10 @@ public class FileStorageStrategy implements StorageStrategy {
         for (FileBucket fileBucket : table) {
             if (fileBucket != null) {
                 Entry entry = fileBucket.getEntry();
-                if (entry != null) {
-                    while (entry != null) {
-                        if (entry.value.equals(value)) {
-                            return true;
-                        }else entry = entry.next;
-                    }
+                while (entry != null) {
+                    if (entry.value.equals(value)) {
+                        return true;
+                    }else entry = entry.next;
                 }
             }
         }
