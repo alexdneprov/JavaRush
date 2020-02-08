@@ -27,8 +27,6 @@ public class Solution {
     public static Set<Long> getIds (Shortener shortener, Set<String> strings) {
         Set<Long> idsSet = new HashSet<>();
 
-
-
         for (String s : strings) {
             idsSet.add(shortener.getId(s));
         }
